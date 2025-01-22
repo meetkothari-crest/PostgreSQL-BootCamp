@@ -11,9 +11,10 @@ SET DateStyle = 'type format';
 -- date/time input formats
 
 /*
+allballs	00:00:00
 
-now		date,time,timestamp
-today	date, timestamp
+now			date,time,timestamp
+today		date, timestamp
 tomorrow
 yesterday
 epochs
@@ -63,4 +64,260 @@ SELECT
 	TO_CHAR('2025-01-01T10:45:55-6:00'::TIMESTAMPTZ, 'YYYY Month DD, hh:mm:ss tz'),
 	TO_CHAR('2025-01-01T10:45:55-6:00'::TIMESTAMPTZ, 'FMMonth DDth YYYY, hh:mm:ss tz');
 
+SELECT 
+	movie_name,
+	release_date,
+	TO_CHAR(release_date, 'FMMonth DDth, YYYY hh:mm:ss TZ')
+FROM movies;
+
+
+-- MAKE_DATE(YYYY,MM,DD)
+
+SELECT 
+	MAKE_DATE(2025,01,01);
+
+-- MKAE_TIME(HH,MM,SS)
+
+SELECT
+	MAKE_TIME(2,3,40.10);
+
+-- MAKE_TIMESTAMP(YYYY, MM, DD, HH, MM, SS)
+
+SELECT
+	MAKE_TIMESTAMP(2025, 01, 01, 10, 20, 30.50);
+
+-- MAKE_INTERVAL(years, months, weeks, days, hours, minutes, seconds)
+
+SELECT
+	MAKE_INTERVAL(2025, 01, 01, 01, 10, 20, 30);
+
+SELECT 
+	MAKE_INTERVAL(2025, 01, 01, 01, 10, 20, 30),
+	MAKE_INTERVAL(2025, 01, 02, 01, 10, 20, 30),
+	MAKE_INTERVAL(2025, 01, 03, 01, 10, 20, 30),
+	MAKE_INTERVAL(2025, 01, 04, 01, 10, 20, 30),
+	MAKE_INTERVAL(2025, 01, 05, 01, 10, 20, 30);
+
+SELECT
+	MAKE_INTERVAL(months => 1, days => 5, years => 2025);
+
+-- MAKE_TIMESTAMPTZ()
+
+SELECT
+	MAKE_TIMESTAMPTZ(2025, 02, 15, 10, 35, 15.35);
+
+SELECT
+	pg_typeof(MAKE_TIMESTAMPTZ(2025, 02, 15, 10, 35, 15.35));
+
+SELECT * 
+FROM pg_timezone_names;
+
+SELECT * 
+FROM pg_timezone_abbrevs;
+
+SELECT
+	pg_typeof(MAKE_TIMESTAMPTZ(2025, 02, 15, 10, 35, 15.35, 'Asia/Calcutta'));
+
+SELECT 
+	MAKE_TIMESTAMPTZ(2025, 01, 01, 00, 01, 00.00, 'IST'),
+	MAKE_TIMESTAMPTZ(2025, 01, 01, 00, 01, 00.00, 'EST'),
+	MAKE_TIMESTAMPTZ(2025, 01, 01, 00, 01, 00.00, 'PST'),
+	MAKE_TIMESTAMPTZ(2025, 01, 01, 00, 01, 00.00, 'ACT'),
+	MAKE_TIMESTAMPTZ(2025, 01, 01, 00, 01, 00.00, '+01'),
+	MAKE_TIMESTAMPTZ(2025, 01, 01, 00, 01, 00.00, '-01');
+
+-- Date value extractors fns : EXTRACT()
+
+SELECT 
+	EXTRACT('DAY' FROM CURRENT_TIMESTAMP) AS "Day",
+	EXTRACT('MONTH' FROM CURRENT_TIMESTAMP) AS "Month",
+	EXTRACT('YEAR' FROM CURRENT_TIMESTAMP) AS "Year";
+
+SELECT 
+	EXTRACT('EPOCH' FROM CURRENT_TIMESTAMP);
+
+SELECT 
+	EXTRACT('CENTURY' FROM INTERVAL '500 YEARS 2 MONTHS 11 DAYS');
+
+SELECT 
+	EXTRACT('CENTURY' FROM CURRENT_TIMESTAMP);
+
+
+-- Math operator with dates
+
+SELECT 
+	DATE '20250101' + 10;
+
+SELECT 
+	'20250101'::DATE + 10;
+
+SELECT 
+	DATE '20250101' + 40;
+
+-- with INTERVAL
+SELECT 
+	TIME '23:59:59' + INTERVAL '1 SECOND';
+
+-- with TIMESTAMP
+SELECT 
+	CURRENT_TIMESTAMP,
+	CURRENT_TIMESTAMP + '01:01:01';
+
+SELECT 
+	DATE '20250101' + TIME '10:25:10';
+
+SELECT 
+	'10:00:00' + TIME '10:25:10';
+
+SELECT 
+	DATE '20250101' - INTERVAL '1 HOUR';
+
+-- Using INTERVALs
+
+SELECT
+	INTERVAL '30 minute' + '30 minute';
+
+SELECT 
+	INTERVAL '2:10:30' / 2;
+
+
+-- OVERLAPS Operator
+
+SELECT
+	(DATE '2020-01-01', DATE '2020-06-30') OVERLAPS
+	(DATE '2020-10-10', DATE '2020-12-31');
+
+-- DATE/TIME fns
+
+SELECT
+	CURRENT_DATE,
+	CURRENT_TIME,
+	CURRENT_TIMESTAMP,
+	LOCALTIME,
+	LOCALTIMESTAMP;
+
+
+-- PostgreSQL based date/time fns
+
+SELECT
+	NOW(),
+	TRANSACTION_TIMESTAMP(),
+	STATEMENT_TIMESTAMP(),
+	CLOCK_TIMESTAMP();
+
+SELECT TIMEOFDAY();
+
+-- AGE(date1, date2) fn
+
+SELECT AGE('2025-01-01', '2025-02-01');
+
+SELECT AGE(TIMESTAMP '2025-01-01');
+
+SELECT AGE(CURRENT_DATE, '2025-01-01');
+
+-- Data accuracy With EPOCH
+
+SELECT AGE(TIMESTAMP '2020-12-20', TIMESTAMP '2020-10-20');
+-- above query not give seconds...
+
+SELECT 
+	EXTRACT(EPOCH FROM TIMESTAMPTZ '2020-12-20') - 
+	EXTRACT(EPOCH FROM TIMESTAMPTZ '2020-10-20');
+
+SELECT 
+	(EXTRACT(EPOCH FROM TIMESTAMPTZ '2020-12-20') - 
+	EXTRACT(EPOCH FROM TIMESTAMPTZ('2020-10-20'))) / 60 / 60 / 24 AS epoch,
+
+	TIMESTAMPTZ '2020-12-20 12:00:00' - TIMESTAMPTZ '2020-10-20 12:00:00' AS tz,
+
+	AGE(TIMESTAMPTZ '2020-12-20 12:00:00', TIMESTAMPTZ '2020-10-20 12:00:00') AS age;
+
+--
+
+CREATE TABLE times(
+	time_id SERIAL PRIMARY KEY,
+	start_date DATE,
+	start_time TIME,
+	start_timestamp TIMESTAMP
+);
+
+INSERT INTO times(start_date, start_time, start_timestamp) VALUES
+('epoch', 'allballs', 'infinity');
+
+INSERT INTO times(start_date, start_time, start_timestamp) VALUES
+('epoch', 'allballs', '-infinity');
+
+INSERT INTO times(start_date, start_time, start_timestamp) VALUES
+(CURRENT_DATE, 'allballs', '-infinity');
+
+SELECT * FROM times;
+
+-- To views available timezone names
+
+SELECT * FROM pg_timezone_names;
+
+SELECT * FROM pg_timezone_abbrevs;
+
+SHOW TIME ZONE;
+
+-- handle timezones
+
+ALTER TABLE times
+ADD COLUMN end_timestamp TIMESTAMP WITH TIME ZONE;
+
+ALTER TABLE times
+ADD COLUMN end_time TIME WITH TIME ZONE;
+
+INSERT INTO times (end_timestamp, end_time) VALUES
+('2020-01-20 11:30:00 US/Pacific', '11:30:00+6');
+
+INSERT INTO times (end_timestamp, end_time) VALUES
+('2020-06-20 11:30:00 US/Pacific', '11:30:00+6');
+
+SELECT * FROM times;
+
+-- DATE_PART()
+
+SELECT DATE_PART('year', TIMESTAMP '2025-01-01');
+
+SELECT 
+	DATE_PART('year', TIMESTAMP '2025-01-01'),
+	DATE_PART('quarter', TIMESTAMP '2025-01-01'),
+	DATE_PART('month', TIMESTAMP '2025-01-01'),
+	DATE_PART('decade', TIMESTAMP '2025-01-01'),
+	DATE_PART('century', TIMESTAMP '2025-01-01');
+
+SELECT 
+	DATE_PART('week', TIMESTAMP '2025-01-01'),
+	DATE_PART('dow', TIMESTAMP '2025-01-01'),
+	DATE_PART('doy', TIMESTAMP '2025-01-01'),
+	DATE_PART('day', TIMESTAMP '2025-01-01'),
+	DATE_PART('hour', TIMESTAMP '2025-01-01 10:20:30'),
+	DATE_PART('minute', TIMESTAMP '2025-01-01 10:20:30'),
+	DATE_PART('second', TIMESTAMP '2025-01-01 10:20:30');
+
+SELECT 
+	movie_name,
+	release_date,
+	DATE_PART('week', release_date) AS "release week",
+	DATE_PART('month', release_date) AS "release month"
+FROM movies
+ORDER BY 
+	4 ASC;
+
+-- DATE_TRUNC()
+
+SELECT 
+	DATE_TRUNC('hour', TIMESTAMP '2020-10-01 05:15:45'),
+	DATE_TRUNC('minute', TIMESTAMP '2020-10-01 05:15:45'),
+	DATE_TRUNC('second', TIMESTAMP '2020-10-01 05:15:45');
+
+-- count the number of movies by release months
+
+SELECT
+	DATE_TRUNC('month', release_date),
+	COUNT(*)
+FROM movies
+GROUP BY 1
+ORDER BY 2;
 	
