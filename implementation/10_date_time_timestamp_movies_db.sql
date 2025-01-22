@@ -1,0 +1,66 @@
+-- DATE/TIME/TIMESTAMP fns
+
+-- Systems Month Date Settings
+
+SHOW DateStyle;
+
+SET DateStyle = 'type format';
+-- type : ISO, Postgres, SQL, German
+-- format : MDY, DMY, YMD
+
+-- date/time input formats
+
+/*
+
+now		date,time,timestamp
+today	date, timestamp
+tomorrow
+yesterday
+epochs
+infinity
+-infinity
+
+*/
+
+-- TO_DATE() fn
+
+SELECT TO_DATE('2025-01-01', 'YYYY-MM-DD');
+SELECT TO_DATE('20250101', 'YYYYMMDD');
+
+ 
+SELECT TO_DATE('01-01-2025', 'DD-MM-YYYY');
+
+SELECT TO_DATE('December 1, 2024', 'Month DD, YYYY');
+
+SELECT TO_DATE('Dec 1, 2024', 'Mon DD, YYYY');
+
+SELECT TO_DATE('1st Jan, 2025', 'DDst Mon, YYYY');
+
+
+-- TO_TIMESTAMP() fn
+
+SELECT TO_TIMESTAMP('2025-01-01 10:20:30', 'YYYY-MM-DD HH:MI:SS');
+
+SELECT TO_TIMESTAMP('2025-01-01 10:20:30', 'YYYY-MM-DD HH');
+
+SELECT TO_TIMESTAMP('2025-01-01 10:20:30', 'YYYY-MM-DD HH:MI');
+
+SELECT TO_TIMESTAMP('2025-01-01 20:4', 'YYYY-MM-DD SS:MS');
+
+SELECT TO_TIMESTAMP('2025-01-01 20:004', 'YYYY-MM-DD SS:MS');
+
+
+SELECT CURRENT_TIMESTAMP;
+
+SELECT 
+	CURRENT_TIMESTAMP,
+	TO_CHAR('2025-01-01 10:00:00'::TIMESTAMP, 'YYYY Month DD');
+
+SELECT
+	CURRENT_TIMESTAMP,
+	TO_CHAR('2025-01-01 10:00:00'::TIMESTAMP, 'YYYY Month, DD'),
+	TO_CHAR('2025-01-01 10:00:00'::TIMESTAMPTZ, 'YYYY Month, DD'),
+	TO_CHAR('2025-01-01T10:45:55-6:00'::TIMESTAMPTZ, 'YYYY Month DD, hh:mm:ss tz'),
+	TO_CHAR('2025-01-01T10:45:55-6:00'::TIMESTAMPTZ, 'FMMonth DDth YYYY, hh:mm:ss tz');
+
+	
