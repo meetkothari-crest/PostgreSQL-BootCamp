@@ -36,7 +36,8 @@ GROUP BY movie_lang;
 -- can use group by without agg. fn ? --> YES
 
 SELECT 
-	movie_length
+	movie_length,
+	COUNT(*)
 FROM movies
 GROUP BY 
 	movie_length;
@@ -175,6 +176,16 @@ FROM emp_test;
 
 SELECT
 	department,
+	COUNT(*)
+FROM emp_test
+GROUP BY department;
+
+-- hanlde the null value 
+-- COALESCE(source, '')
+-- COALESCE(departmernt, 'NO DEPARTMENT')
+
+SELECT 
+	COALESCE(department, 'NO DEPARTMENT') AS department,
 	COUNT(*)
 FROM emp_test
 GROUP BY department;
